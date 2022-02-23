@@ -165,14 +165,14 @@ __DEVICE__ float degrees_to_radians(float degrees)
 __DEVICE__ float PQ_to_lin(float x, float m2)
 {
     x = spow(x, 1.0f / m2);
-	x = _clampf(x, -1.0087f, 1.0087f);
+    x = _clampf(x, -1.0087f, 1.0087f);
     return x = (_fabs(x) <= c1) ? 0.0f : _copysignf(1.0f, x) * _powf((_fabs(x) - c1) / (c2 - c3 * _fabs(x)), 1.0f / eta) * Lp;
 }
 
 __DEVICE__ float lin_to_PQ(float x, float m2)
 {
-	x = spow(x / Lp, eta);
-	return (x == 0.0f) ? 0.0f : _copysignf(1.0f, x) * _powf((c1 + c2 * _fabs(x)) / (1.0f + c3 * _fabs(x)), m2);
+    x = spow(x / Lp, eta);
+    return (x == 0.0f) ? 0.0f : _copysignf(1.0f, x) * _powf((c1 + c2 * _fabs(x)) / (1.0f + c3 * _fabs(x)), m2);
 }
 
 // convert ACEScct encoded values to linear
@@ -232,16 +232,16 @@ __DEVICE__ float3 CAT_Zhai2018(float3 XYZ_b, float3 XYZ_wb, float3 XYZ_wd, float
 // convert XYZ tristimulus values to the ZCAM intermediate Izazbz colorspace
 __DEVICE__ float3 XYZ_to_Izazbz(float3 XYZD65, float cb, float cg, float abneys_abyss)
 {
-	mat3 xyz_to_lms_zcam = XYZ_to_LMS_ZCAM;
-	
-	float coeff_zm = xyz_to_lms_zcam.r0.z * _powf(2.0f, abneys_abyss);
-	float coeff_zs = xyz_to_lms_zcam.r1.z * _powf(2.0f, -abneys_abyss);
+    mat3 xyz_to_lms_zcam = XYZ_to_LMS_ZCAM;
+    
+    float coeff_zm = xyz_to_lms_zcam.r0.z * _powf(2.0f, abneys_abyss);
+    float coeff_zs = xyz_to_lms_zcam.r1.z * _powf(2.0f, -abneys_abyss);
 
-	xyz_to_lms_zcam.r0.x = xyz_to_lms_zcam.r0.x + xyz_to_lms_zcam.r0.z - coeff_zm;
-	xyz_to_lms_zcam.r0.z = coeff_zm;
-	xyz_to_lms_zcam.r1.y = xyz_to_lms_zcam.r1.y + xyz_to_lms_zcam.r1.z - coeff_zs;
-	xyz_to_lms_zcam.r1.z = coeff_zs;
-	
+    xyz_to_lms_zcam.r0.x = xyz_to_lms_zcam.r0.x + xyz_to_lms_zcam.r0.z - coeff_zm;
+    xyz_to_lms_zcam.r0.z = coeff_zm;
+    xyz_to_lms_zcam.r1.y = xyz_to_lms_zcam.r1.y + xyz_to_lms_zcam.r1.z - coeff_zs;
+    xyz_to_lms_zcam.r1.z = coeff_zs;
+    
     float3 XYZpD65 = XYZD65;
     XYZpD65.x = cb * XYZD65.x - (cb - 1.0f) * XYZD65.z;
     XYZpD65.y = cg * XYZD65.y - (cg - 1.0f) * XYZD65.x;
@@ -258,16 +258,16 @@ __DEVICE__ float3 XYZ_to_Izazbz(float3 XYZD65, float cb, float cg, float abneys_
 // convert the ZCAM intermediate Izazbz colorspace to XYZ tristimulus values
 __DEVICE__ float3 Izazbz_to_XYZ(float3 Izazbz, float cb, float cg, float abneys_abyss)
 {
-	mat3 xyz_to_lms_zcam = XYZ_to_LMS_ZCAM;
-	
-	float coeff_zm = xyz_to_lms_zcam.r0.z * _powf(2.0f, abneys_abyss);
-	float coeff_zs = xyz_to_lms_zcam.r1.z * _powf(2.0f, -abneys_abyss);
+    mat3 xyz_to_lms_zcam = XYZ_to_LMS_ZCAM;
+    
+    float coeff_zm = xyz_to_lms_zcam.r0.z * _powf(2.0f, abneys_abyss);
+    float coeff_zs = xyz_to_lms_zcam.r1.z * _powf(2.0f, -abneys_abyss);
 
-	xyz_to_lms_zcam.r0.x = xyz_to_lms_zcam.r0.x + xyz_to_lms_zcam.r0.z - coeff_zm;
-	xyz_to_lms_zcam.r0.z = coeff_zm;
-	xyz_to_lms_zcam.r1.y = xyz_to_lms_zcam.r1.y + xyz_to_lms_zcam.r1.z - coeff_zs;
-	xyz_to_lms_zcam.r1.z = coeff_zs;
-	
+    xyz_to_lms_zcam.r0.x = xyz_to_lms_zcam.r0.x + xyz_to_lms_zcam.r0.z - coeff_zm;
+    xyz_to_lms_zcam.r0.z = coeff_zm;
+    xyz_to_lms_zcam.r1.y = xyz_to_lms_zcam.r1.y + xyz_to_lms_zcam.r1.z - coeff_zs;
+    xyz_to_lms_zcam.r1.z = coeff_zs;
+    
     float3 LMSp = vector_dot(invert(ZCAM_LMS_to_Izazbz), Izazbz);
     float3 LMS;
     LMS.x = PQ_to_lin(LMSp.x, rho);
@@ -631,24 +631,24 @@ __DEVICE__ float highlightDesatFactor(float Iz, float IzTS, float referenceLumin
     float IzAligned = Iz + IzMidTS - IzMid;
 
     float desatFactor = _clampf(compressPowerP((_log10f(_fmaxf(0.0000000596046448f, IzAligned)) - _log10f(_fmaxf(0.0000000596046448f, IzTS))) * desatHighlights, threshold, 65504.0f, power, 0), 0.0f, 1.0f);
-	desatFactor = desatFactor > 0.8f ? ( -1.0f / (( desatFactor - 0.8f ) / ( 1.0f - 0.8f ) + 1.0f ) + 1.0f ) * ( 1.0f - 0.8f ) + 0.8f : desatFactor;
-	desatFactor = 1.0f - desatFactor;
+    desatFactor = desatFactor > 0.8f ? ( -1.0f / (( desatFactor - 0.8f ) / ( 1.0f - 0.8f ) + 1.0f ) + 1.0f ) * ( 1.0f - 0.8f ) + 0.8f : desatFactor;
+    desatFactor = 1.0f - desatFactor;
 
     return desatFactor;
 }
 
 __DEVICE__ float oldHighlightDesatFactor(float Iz, float IzTS, float referenceLuminance, float Y_MID, float hlDesat)
 {
-	// Bringing this back is 100% a hack.
-	float lum = IzToLuminance(IzTS);
-	float desat_A = (lum - Y_MID) / Y_MID;
-	desat_A = _clampf(desat_A, 0.0f, 1.0f);
-	float desat_B = Iz - IzTS;
-	desat_A *= desat_B;
-	desat_A *= hlDesat;
-	desat_A = desat_A > 0.8f ? ( -1.0f / (( desat_A - 0.8f ) / ( 1.0f - 0.8f ) + 1.0f ) + 1.0f ) * ( 1.0f - 0.8f ) + 0.8f : desat_A;
-	desat_A = 1.0f - desat_A;
-	return desat_A;
+    // Bringing this back is 100% a hack.
+    float lum = IzToLuminance(IzTS);
+    float desat_A = (lum - Y_MID) / Y_MID;
+    desat_A = _clampf(desat_A, 0.0f, 1.0f);
+    float desat_B = Iz - IzTS;
+    desat_A *= desat_B;
+    desat_A *= hlDesat;
+    desat_A = desat_A > 0.8f ? ( -1.0f / (( desat_A - 0.8f ) / ( 1.0f - 0.8f ) + 1.0f ) + 1.0f ) * ( 1.0f - 0.8f ) + 0.8f : desat_A;
+    desat_A = 1.0f - desat_A;
+    return desat_A;
 }
 
 // check if the 3D point 'v' is inside a cube with the dimensions cubeSize x cubeSize x cubeSize 
@@ -693,11 +693,11 @@ __DEVICE__ int isInsideCube(float3 v, float cubeSize, float smoothing)
 
 __DEVICE__ float2 estimateGamutCusp(float3 JMh, float3 refWhite, float3 d65White, float referenceLuminance, float adaptDegree, float F_b, float F_L, float F_s, float Y_MAX, mat3 XYZ_to_RGB, float cb, float cg, float abneys_abyss)
 {
-	// Tableless gamut cusp estimate that gives results very close to the original table-based Blinkscript version.
+    // Tableless gamut cusp estimate that gives results very close to the original table-based Blinkscript version.
     mat3 RGB_to_XYZ = invert(XYZ_to_RGB);
     
-	// As a first guesstimate, we project the input JMh to limit RGB, bring it back into gamut then do the same calculation as 
-	// in the Blinkscript init().
+    // As a first guesstimate, we project the input JMh to limit RGB, bring it back into gamut then do the same calculation as 
+    // in the Blinkscript init().
     float3 limitRGB = vector_dot(XYZ_to_RGB, ZCAM_JMh_to_XYZ(JMh, refWhite, d65White, referenceLuminance, adaptDegree, F_b, F_L, F_s, cb, cg, abneys_abyss)) / referenceLuminance;
     if (limitRGB.x < 0.0f || limitRGB.y < 0.0f || limitRGB.z < 0.0f)
     {
@@ -714,53 +714,53 @@ __DEVICE__ float2 estimateGamutCusp(float3 JMh, float3 refWhite, float3 d65White
         limitRGB.z /= divider;
     }
 
-	float3 hsv = RGB_to_HSV(limitRGB);
-	float3 rgbCuspTest = HSV_to_RGB(make_float3(hsv.x, 1.0f, 1.0f));
-	float3 JMhCuspTest = XYZ_to_ZCAM_JMh(vector_dot(RGB_to_XYZ, rgbCuspTest * Y_MAX), refWhite, d65White, referenceLuminance, adaptDegree, F_b, F_L, F_s, cb, cg, abneys_abyss);
+    float3 hsv = RGB_to_HSV(limitRGB);
+    float3 rgbCuspTest = HSV_to_RGB(make_float3(hsv.x, 1.0f, 1.0f));
+    float3 JMhCuspTest = XYZ_to_ZCAM_JMh(vector_dot(RGB_to_XYZ, rgbCuspTest * Y_MAX), refWhite, d65White, referenceLuminance, adaptDegree, F_b, F_L, F_s, cb, cg, abneys_abyss);
 
-	// Usually, JMhCuspTest.z will not match JMh.z so we do a refinement pass here. This is equivalent to scanning the LUT for
-	// correct lo and hi bound except that we set lo and hi to JMhCuspTest and have an explicit scanning direction.
-	float3 lo = JMhCuspTest;
-	float3 hi = JMhCuspTest;
+    // Usually, JMhCuspTest.z will not match JMh.z so we do a refinement pass here. This is equivalent to scanning the LUT for
+    // correct lo and hi bound except that we set lo and hi to JMhCuspTest and have an explicit scanning direction.
+    float3 lo = JMhCuspTest;
+    float3 hi = JMhCuspTest;
 
-	if (JMhCuspTest.z > JMh.z)
-	{
-		// Too high. 
-		// Loop is max 360 iterations but guesstimate is precise enough that it should never do more than 2 or 3 iterations.
-		for (int i = 0; i < 360; i++)
-		{
-			hsv.x -= 1.0f / 360.0f;
-			rgbCuspTest = HSV_to_RGB(make_float3(_fmaxf(hsv.x, 0.0f), 1.0f, 1.0f));
-			lo = XYZ_to_ZCAM_JMh(vector_dot(RGB_to_XYZ, rgbCuspTest * Y_MAX), refWhite, d65White, referenceLuminance, adaptDegree, F_b, F_L, F_s, cb, cg, abneys_abyss);
+    if (JMhCuspTest.z > JMh.z)
+    {
+        // Too high. 
+        // Loop is max 360 iterations but guesstimate is precise enough that it should never do more than 2 or 3 iterations.
+        for (int i = 0; i < 360; i++)
+        {
+            hsv.x -= 1.0f / 360.0f;
+            rgbCuspTest = HSV_to_RGB(make_float3(_fmaxf(hsv.x, 0.0f), 1.0f, 1.0f));
+            lo = XYZ_to_ZCAM_JMh(vector_dot(RGB_to_XYZ, rgbCuspTest * Y_MAX), refWhite, d65White, referenceLuminance, adaptDegree, F_b, F_L, F_s, cb, cg, abneys_abyss);
 
-			if (lo.z <= JMh.z || hsv.x < 0.0f)
-				break;
+            if (lo.z <= JMh.z || hsv.x < 0.0f)
+                break;
 
-			hi = lo;
-		}
-	}
-	else if (JMhCuspTest.z < JMh.z)
-	{
-		// Too low.
-		// Loop is max 360 iterations but guesstimate is precise enough that it should never do more than 2 or 3 iterations.
-		for (int i = 0; i < 360; i++)
-		{
-			hsv.x += 1.0f / 360.0f;
-			rgbCuspTest = HSV_to_RGB(make_float3(_fminf(hsv.x, 360.0f - epsilon), 1.0f, 1.0f));
-			hi = XYZ_to_ZCAM_JMh(vector_dot(RGB_to_XYZ, rgbCuspTest * Y_MAX), refWhite, d65White, referenceLuminance, adaptDegree, F_b, F_L, F_s, cb, cg, abneys_abyss);
+            hi = lo;
+        }
+    }
+    else if (JMhCuspTest.z < JMh.z)
+    {
+        // Too low.
+        // Loop is max 360 iterations but guesstimate is precise enough that it should never do more than 2 or 3 iterations.
+        for (int i = 0; i < 360; i++)
+        {
+            hsv.x += 1.0f / 360.0f;
+            rgbCuspTest = HSV_to_RGB(make_float3(_fminf(hsv.x, 360.0f - epsilon), 1.0f, 1.0f));
+            hi = XYZ_to_ZCAM_JMh(vector_dot(RGB_to_XYZ, rgbCuspTest * Y_MAX), refWhite, d65White, referenceLuminance, adaptDegree, F_b, F_L, F_s, cb, cg, abneys_abyss);
 
-			if (hi.z >= JMh.z || hsv.x >= 360.0f)
-				break;
+            if (hi.z >= JMh.z || hsv.x >= 360.0f)
+                break;
 
-			lo = hi;
-		}
-	}
+            lo = hi;
+        }
+    }
 
-	// Handle edge case.
-	if (lo.z == hi.z)
-		hi.z += 1e-10f;
+    // Handle edge case.
+    if (lo.z == hi.z)
+        hi.z += 1e-10f;
 
-	// Interpolation.
+    // Interpolation.
     float t = _clampf((JMh.z - lo.z) / (hi.z - lo.z), 0.0f, 1.0f);
     float cuspJ = _mix(lo.x, hi.x, t);
     float cuspM = _mix(lo.y, hi.y, t);
@@ -790,10 +790,10 @@ __DEVICE__ float2 findBoundary(float2 JMSource, float2 JMFocus, float h, float3 
 
     for (int i = 0; i < 10; ++i)
     {
-		// Changed the infinite while loop to a for with finite iterations to prevent Resolve from hanging in certain conditions.
-		// It should never take more than 64 iterations to converge and, if it does, then we can accept that it's ok to give up
-		// as stepSize will already be too small for single-precision floats after ~40 iterations (assuming it starts on average at 2^3).
-		// while(1)
+        // Changed the infinite while loop to a for with finite iterations to prevent Resolve from hanging in certain conditions.
+        // It should never take more than 64 iterations to converge and, if it does, then we can accept that it's ok to give up
+        // as stepSize will already be too small for single-precision floats after ~40 iterations (assuming it starts on average at 2^3).
+        // while(1)
         for( int j = 0; j < 64; ++j)
         {
             JMtest = JMtest + unitVector * stepSize;
@@ -828,9 +828,9 @@ __DEVICE__ float2 findBoundary(float2 JMSource, float2 JMFocus, float h, float3 
 
 __DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p_R, float p_G, float p_B)
 {
-	float3 input = make_float3(p_R, p_G, p_B);
+    float3 input = make_float3(p_R, p_G, p_B);
 
-	// Re-used the structure of Nick's v9 (or was it v7) DCTL port with explicit in ref white and out ref white.
+    // Re-used the structure of Nick's v9 (or was it v7) DCTL port with explicit in ref white and out ref white.
     float3 inputD65White = make_float3(0.9504559270516716f, 1.0f, 1.0890577507598784f);
     float3 inputRefWhite;
     float3 outputRefWhite;
@@ -864,7 +864,7 @@ __DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p
 
     float F;
     float F_s;
-	float F_s_in = 0.525f;
+    float F_s_in = 0.525f;
     
     if (viewCond == dark)
     {
@@ -945,20 +945,20 @@ __DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p
         if (applyHighlightDesat == 1)
         {
             float factM = highlightDesatFactor(Iz, IzTS, refLum, Y_MID, hlDesat, gmThresh, gmPower);
-			if (useOldHlDesat == 1)
-			{
-				// For some scenes, the old highlight desat algorithm works better. Especially in SDR.
-				factM = oldHighlightDesatFactor(Iz, IzTS, refLum, Y_MID, hlDesat);
-			}
-			
+            if (useOldHlDesat == 1)
+            {
+                // For some scenes, the old highlight desat algorithm works better. Especially in SDR.
+                factM = oldHighlightDesatFactor(Iz, IzTS, refLum, Y_MID, hlDesat);
+            }
+            
             JMh.y *= factM;
         }
-		
+        
         // Gamut compression
         if (applyGamutCompression == 1)
         {   
             mat3 RGB_to_Limit_XYZ = invert(limit);
-			
+            
             // limitJmax (assumed to match limitRGB white)
             float limitJmax = XYZ_to_ZCAM_JMh(vector_dot(RGB_to_Limit_XYZ, make_float3(1.0f, 1.0f, 1.0f) * Y_MAX), outputRefWhite, inputD65White, refLum, adaptDegree, F_b, F_L, F_s, cb, cg, abneys_abyss).x;
 
@@ -976,22 +976,22 @@ __DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p
             {
                 limitMmax = _fmaxf(limitMmax, gamutCornersTable[i].y);
             }
-            		
+                    
             // estimate the gamut cusp in JMh to avoid the need for building a table then
             // doing a linear search into that table
             float2 JMinput = make_float2(JMh.x, JMh.y);
             float2 JMcusp = estimateGamutCusp(JMh, outputRefWhite, inputD65White, refLum, adaptDegree, F_b, F_L, F_s, Y_MAX, limit, cb, cg, abneys_abyss);
 
-			if (applyShadowSaturationFix == 1)
-			{
-				// Fix shadow oversaturation. All the factors here were found experimentally.
-				// The goal was to reduce saturation on brown skin in shadows.
-				// The solution is not that good though and becomes worse as the limiting gamut becomes larger.
-				float shadowToMidFactor = _clampf(JMinput.x - (Y_MID * 0.5f), 0.0f, 1.0f);
-				shadowToMidFactor = shadowToMidFactor * shadowToMidFactor * (3.0f - 2.0f * shadowToMidFactor);
-				JMinput.y = _mix(0.55f * JMinput.y, JMinput.y, shadowToMidFactor);
-				JMcusp.y = _mix(0.2f * JMcusp.y, JMcusp.y, shadowToMidFactor);
-			}
+            if (applyShadowSaturationFix == 1)
+            {
+                // Fix shadow oversaturation. All the factors here were found experimentally.
+                // The goal was to reduce saturation on brown skin in shadows.
+                // The solution is not that good though and becomes worse as the limiting gamut becomes larger.
+                float shadowToMidFactor = _clampf(JMinput.x - (Y_MID * 0.5f), 0.0f, 1.0f);
+                shadowToMidFactor = shadowToMidFactor * shadowToMidFactor * (3.0f - 2.0f * shadowToMidFactor);
+                JMinput.y = _mix(0.55f * JMinput.y, JMinput.y, shadowToMidFactor);
+                JMcusp.y = _mix(0.2f * JMcusp.y, JMcusp.y, shadowToMidFactor);
+            }
 
             float sstsMidJ = XYZ_to_ZCAM_JMh(outputRefWhite * Y_MID, outputRefWhite, inputD65White, refLum, adaptDegree, F_b, F_L, F_s, cb, cg, abneys_abyss).x;
             float focusJ = _mix(JMcusp.x, sstsMidJ, gmCuspMidBlend);
@@ -1026,22 +1026,22 @@ __DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p
             
             float startStepSize = _mix(JMcusp.y / 3.0f, 0.1f, cuspToTipRatio);
             float2 JMboundary = findBoundary(JMinput, JMfocus, JMh.z, outputRefWhite, inputD65White, refLum, 
-				adaptDegree, F_b, F_L, F_s, startStepSize, Y_MAX / refLum, gmSmoothCusps, limitJmax, limitMmax, limit, cb, cg, abneys_abyss);
+                adaptDegree, F_b, F_L, F_s, startStepSize, Y_MAX / refLum, gmSmoothCusps, limitJmax, limitMmax, limit, cb, cg, abneys_abyss);
                 
             float normFact = 1.0f / _fmaxf(0.0001f, len_f2(JMboundary - achromaticIntercept));
             float v = len_f2(JMinput - achromaticIntercept) * normFact;
             float vCompressed = compressPowerP(v, gmThresh, gmLimit, gmPower, direction);
             float2 JMcompressed = achromaticIntercept + normalize_f2(JMinput - achromaticIntercept) * vCompressed / normFact;
-		
-			if (useOldHlDesat == 0)
-			{
-				JMh.x = JMcompressed.x;
-				JMh.y = JMcompressed.y;
-			}
-			else
-			{
-				JMh.y = _fmaxf(JMboundary.y * compressPowerP(JMh.y / JMboundary.y, gmThresh, gmLimit, gmPower, 0), 1e-06f);
-			}
+        
+            if (useOldHlDesat == 0)
+            {
+                JMh.x = JMcompressed.x;
+                JMh.y = JMcompressed.y;
+            }
+            else
+            {
+                JMh.y = _fmaxf(JMboundary.y * compressPowerP(JMh.y / JMboundary.y, gmThresh, gmLimit, gmPower, 0), 1e-06f);
+            }
         }
         
         XYZ = ZCAM_JMh_to_XYZ(JMh, outputRefWhite, inputD65White, refLum, adaptDegree, F_b, F_L, F_s, cb, cg, abneys_abyss);
@@ -1059,20 +1059,20 @@ __DEVICE__ float3 transform(int p_Width, int p_Height, int p_X, int p_Y, float p
         }
         if (outEOTF == BT1886)
         {
-			// Replaced back /= referenceLuminance by /= 100.0f because we don't want to darken the output if we
-			// increase reference luminance.
+            // Replaced back /= referenceLuminance by /= 100.0f because we don't want to darken the output if we
+            // increase reference luminance.
             output /= 100.0f;
             output.x = spow(output.x, 1.0f / 2.4f);
             output.y = spow(output.y, 1.0f / 2.4f);
             output.z = spow(output.z, 1.0f / 2.4f);
         }
-		else if (outEOTF == sRGB) // Added sRGB as a test even though ZCAM model with sRGB gamma looks horrible.
-		{			
-			output /= 100.0f;
+        else if (outEOTF == sRGB) // Added sRGB as a test even though ZCAM model with sRGB gamma looks horrible.
+        {           
+            output /= 100.0f;
             output.x = linear_to_sRGB(output.x);
             output.y = linear_to_sRGB(output.y);
             output.z = linear_to_sRGB(output.z);
-		}
+        }
         else if (outEOTF == PQ)
         {
             output.x = linear_to_ST2084(_fmaxf(0.0f, output.x));
